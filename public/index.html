@@ -4,56 +4,96 @@
     <title>Socket.IO Client</title>
     <style>
       body {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: auto;
+        height: 94vh;
+        margin-top: 3vh;
         font-family: Arial, sans-serif;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: #e5ddd5;
       }
       ul {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
         list-style-type: none;
         padding: 0;
+        margin: 0;
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        background-color: #f7f7f7;
       }
       li {
-        padding: 8px;
-        margin-bottom: 10px;
-        background: #f3f3f3;
-        border-radius: 4px;
+        padding: 10px;
+        margin: 10px;
+        background: #dcf8c6;
+        border-radius: 10px;
+        max-width: 60%;
+        align-self: flex-end;
+        word-wrap: break-word;
+      }
+      .received {
+        background: #ffffff;
+        align-self: flex-start;
+      }
+      form {
+        display: flex;
+        padding: 10px;
+        background: #fff;
+        border-top: 1px solid #ddd;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
       }
       input {
         padding: 10px;
-        border-radius: 4px;
+        border-radius: 20px;
         border: 1px solid #ddd;
-        width: 90%;
+        width: 100%;
+        margin-right: 10px;
+        font-size: 15px;
       }
       button {
-        padding: 10px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        background: #5cb85c;
+        padding: 10px 25px;
+        border-radius: 20px;
+        border: none;
+        background: #128c7e;
         color: #fff;
+        font-size: 15px;
       }
     </style>
   </head>
   <body>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
+      <input
+        id="input"
+        autocomplete="off"
+        placeholder="Type a message..."
+      /><button>Invia</button>
     </form>
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script>
-      // Connessione al server socket.io
-      var socket = io("http://localhost:3000");
+      const URL = window.location.hostname.includes("localhost")
+        ? "http://localhost:3000"
+        : `https://${window.location.hostname}`;
 
-      // Gestione dell'invio del modulo
+      var socket = io(URL);
+
       document.addEventListener("DOMContentLoaded", async (event) => {
         var form = document.getElementById("form");
         var input = document.getElementById("input");
         var messages = document.getElementById("messages");
-
-        // Scarica i messaggi iniziali
         try {
-          const response = await fetch("http://localhost:3000/api/messages");
+          const response = await fetch(`${URL}/api/messages`);
           const initialMessages = await response.json();
           initialMessages.forEach((msg) => {
             var item = document.createElement("li");
             item.textContent = msg.content;
+            item.className = "received";
             messages.appendChild(item);
           });
         } catch (error) {
@@ -61,18 +101,20 @@
         }
 
         form.addEventListener("submit", function (e) {
-          e.preventDefault(); // Evita l'invio del modulo alla vecchia maniera
+          e.preventDefault();
           if (input.value) {
-            // Invia il messaggio al server
             socket.emit("message-sent", input.value);
+            var item = document.createElement("li");
+            item.textContent = input.value;
+            messages.appendChild(item);
             input.value = "";
           }
         });
 
-        // Ascolta i messaggi dal server
         socket.on("message-received", function (msg) {
           var item = document.createElement("li");
           item.textContent = msg;
+          item.className = "received";
           messages.appendChild(item);
           window.scrollTo(0, document.body.scrollHeight);
         });
