@@ -5,13 +5,14 @@ import { config } from 'dotenv';
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import path from "path";
 // #endregion
 
 // #region ::: CONFIGURATIONS :::
 config(); // carica le variabili d'ambiente
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 const server = createServer(app);
 const client = createClient({
     connectionString: process.env.DATABASE_URL
@@ -52,8 +53,9 @@ io.on("connection", (socket) => {
     })
 })
 
-
-
+app.get("/", (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+})
 
 // Define routes
 app.get("/api/messages", async (req: Request, res: Response) => { // restituisce tutti i messaggi
@@ -76,10 +78,6 @@ app.post("/api/messages", async (req: Request, res: Response) => {
 });
 
 // Start the server
-server.listen(port, () => {
-    console.log(`Server started at http://localhost:${port}`);
-});
-
-app.listen(8080, () => {
-    console.log('Server listening on port 8080');
+server.listen(PORT, () => {
+    console.log(`Server started at http://localhost:${PORT}`);
 });

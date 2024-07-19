@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc --noEmit && tsc --outDir build",
-    "dev": "npm run build && node build/index.js",
-    "start": "nodemon"
+    "build": "tsc --noEmit && tsc --outDir build && npm run copy-public",
+    "start": "node build/index.js",
+    "copy-public": "copyfiles -u 1 public/**/* build",
+    "dev": "nodemon"
   },
   "author": "andreamarchese",
   "license": "ISC",
