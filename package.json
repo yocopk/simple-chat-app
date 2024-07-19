@@ -1,17 +1,17 @@
 {
   "name": "simple-chat-app",
   "version": "1.0.0",
-  "description": "",
+  "author": "andreamarchese",
+  "license": "ISC",
   "scripts": {
     "build": "tsc --noEmit && tsc --outDir build && npm run copy-public",
     "start": "node build/index.js",
     "copy-public": "copyfiles -u 1 public/**/* build",
     "dev": "nodemon"
   },
-  "author": "andreamarchese",
-  "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.1.4",
     "typescript": "^5.5.3"
   },
